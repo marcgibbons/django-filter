@@ -185,7 +185,7 @@ class BaseCSVField(forms.Field):
 
     def clean(self, value):
         if value is None:
-            return None
+            return self.validate(value)
         return [super(BaseCSVField, self).clean(v) for v in value]
 
 

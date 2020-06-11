@@ -235,7 +235,6 @@ class BaseCSVFieldTests(TestCase):
         self.field = DecimalCSVField()
 
     def test_clean(self):
-        self.assertEqual(self.field.clean(None), None)
         self.assertEqual(self.field.clean(''), [])
         self.assertEqual(self.field.clean(['1']), [1])
         self.assertEqual(self.field.clean(['1', '2']), [1, 2])
@@ -268,6 +267,15 @@ class BaseCSVFieldTests(TestCase):
         self.assertIsInstance(field.widget, forms.Select)
         self.assertIsInstance(field.widget, BaseCSVWidget)
 
+    def test_clean_when_required_false(self):
+        self.field.required = False
+        self.assertEqual(self.field.clean(None), None)
+
+    def test_clean_when_required_true(self):
+        self.field.required = True
+        with self.assertRaises(forms.ValidationError):
+            self.field.clean(None)
+
 
 class BaseRangeFieldTests(TestCase):
     def setUp(self):
@@ -277,7 +285,6 @@ class BaseRangeFieldTests(TestCase):
         self.field = DecimalRangeField()
 
     def test_clean(self):
-        self.assertEqual(self.field.clean(None), None)
         self.assertEqual(self.field.clean(''), [])
         self.assertEqual(self.field.clean([]), [])
         self.assertEqual(self.field.clean(['1', '2']), [1, 2])
@@ -291,3 +298,12 @@ class BaseRangeFieldTests(TestCase):
 
         with self.assertRaises(forms.ValidationError):
             self.field.clean(['1', '2', '3'])
+
+    def test_when_required_false(self):
+        self.field.required = False
+        self.assertEqual(self.field.clean(None), None)
+
+    def test_when_required_true(self):
+        self.field.required = True
+        with self.assertRaises(forms.ValidationError):
+            self.field.clean(None)
